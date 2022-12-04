@@ -29,19 +29,15 @@ provider "azurerm" {
       location = "southindia"
 }
 
- module "stgTopic" {
-      source = "/home/kunal/modules"
-}
 
  resource "azurerm_storage_queue" "stgQueue" {
        name = "stgaccountqueueterra"
        storage_account_name = "storageaccountpracticeey"
 }
 
- resource "azurerm_eventgrid_system_topic_event_subscription" "eventSub" {
+ resource "azurerm_eventgrid_event_subscription" "eventSub" {
       name = "eventSubTerra"
-      resource_group_name = local.resource_group
-      system_topic = module.stgTopic.stgTopicId
+      scope = "/subscriptions/abfa7548-7cd5-4ab5-91b2-07efdced45fe/resourceGroups/RGForPractice/providers/Microsoft.Storage/storageAccounts/storageaccountpracticeey"
       storage_queue_endpoint {
          storage_account_id = "/subscriptions/abfa7548-7cd5-4ab5-91b2-07efdced45fe/resourceGroups/RGForPractice/providers/Microsoft.Storage/storageAccounts/storageaccountpracticeey"
          queue_name = azurerm_storage_queue.stgQueue.name

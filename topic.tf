@@ -10,7 +10,7 @@ terraform {
          resource_group_name = "RGForPractice"
          storage_account_name = "storageaccountpracticeey"       
          container_name = "containerforpractice"
-         key = "terraform.tfstate"
+         key = "topic.tfstate"
      }
 }
 
@@ -29,23 +29,19 @@ provider "azurerm" {
       location = "southindia"
 }
 
- module "stgTopic" {
-      source = "/home/kunal/modules"
-}
+ resource "azurerm_eventgrid_system_topic" "stgTopic" {
+        name = "stgaccounttopicterra"
+        resource_group_name = local.resource_group 
+        location = local.location
+        topic_type = "Microsoft.Storage.StorageAccounts"
+        source_arm_resource_id = "/subscriptions/abfa7548-7cd5-4ab5-91b2-07efdced45fe/resourceGroups/RGForPractice/providers/Microsoft.Storage/storageAccounts/storageaccountpracticeey"
+        }
 
- resource "azurerm_storage_queue" "stgQueue" {
-       name = "stgaccountqueueterra"
-       storage_account_name = "storageaccountpracticeey"
-}
 
- resource "azurerm_eventgrid_system_topic_event_subscription" "eventSub" {
-      name = "eventSubTerra"
-      resource_group_name = local.resource_group
-      system_topic = module.stgTopic.stgTopicId
-      storage_queue_endpoint {
-         storage_account_id = "/subscriptions/abfa7548-7cd5-4ab5-91b2-07efdced45fe/resourceGroups/RGForPractice/providers/Microsoft.Storage/storageAccounts/storageaccountpracticeey"
-         queue_name = azurerm_storage_queue.stgQueue.name
-}
+ Output "stgTopicId" {
+
+ value =  azurerm_eventgrid_system_topic.stgTopic.id
+
 }
 
 
